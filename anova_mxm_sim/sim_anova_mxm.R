@@ -33,13 +33,13 @@ options(scipen=999) #disable scientific notation.
 myM<-0 # Mean score for all variables in the sample - we're using z scores for simplicity
 mySD<-1 #
 myN<-10 #set sample size per group (You can vary this to see the effect)
-n_sims <- 20 # Specify number of simulated datasets
+n_sims <- 10000 # Specify number of simulated datasets
 # We'll start with simulating 20 datasets, but can later update this number
 ptable=matrix(rep(NA,(n_sims*9)),nrow=n_sims) #initialising a matrix that will hold p values in each run
 table_names <- c("A", "B", "C", "AB", "AC", "BC", "ABC", "anysig", "Bonfsig")
 ## data.frame for Mixed models
-mxn_dt <- as.data.frame(matrix(0, ncol = length(table_names) , nrow = n_sims))
-names(mxn_dt) <- table_names
+mxm_dt <- as.data.frame(matrix(0, ncol = length(table_names) , nrow = n_sims))
+names(mxm_dt) <- table_names
 
 # There are 7 p-values: 3 main effects, 3 2-way interactions, and 1 3-way interaction
 # The last two columns will denote if any p-value in a run is <.05, or < .007 (Bonferroni corrected)
@@ -102,7 +102,7 @@ for (i in 1:n_sims){
 # ptable[i,8]<-ifelse(any(ptable[i,1:7]<.05)==TRUE,1,0)
 # ptable[i,9]<-ifelse(any(ptable[i,1:7]<.007)==TRUE,1,0)
 
-m1 <- lmer(value ~ -1 + ( 1 | Subject), data = mylongdata, REML= FALSE)
+m1 <- lmer(value ~ -1 + ( 1 | Subject ) + (1 | time:difficulty), data = mylongdata, REML= FALSE)
 m2 <- update(m1, .~. + time)
 m3 <- update(m2, .~. + difficulty)
 m4 <- update(m3, .~. + Group)
@@ -114,14 +114,14 @@ m8 <- update(m7, .~. + time:difficulty:Group)
 ## anova(m1, m2, m3, m4, m5, m6, m7, m8)$`Pr(>Chisq)`
 
 ## add results to dt
-mxn_dt[i, 1:7] <- anova(m1, m2, m3, m4, m5, m6, m7, m8)$`Pr(>Chisq)`[2:8]
+mxm_dt[i, 1:7] <- anova(m1, m2, m3, m4, m5, m6, m7, m8)$`Pr(>Chisq)`[2:8]
 
-sigp<-which(mxn_dt[i,1:7]<.05) #find whether any p-values are < .05
+sigp<-which(mxm_dt[i,1:7]<.05) #find whether any p-values are < .05
 if(length(sigp)>0)
-{mxn_dt[i,8]<-1} # if so, assign a 1 to column 8
-sigp<-which(mxn_dt[i,1:7]<.007) #now do the same with p < .007, i.e. .05/7
+{mxm_dt[i,8]<-1} # if so, assign a 1 to column 8
+sigp<-which(mxm_dt[i,1:7]<.007) #now do the same with p < .007, i.e. .05/7
 if(length(sigp)>0)
-{mxn_dt[i,9]<-1} #result is stored in column 9
+{mxm_dt[i,9]<-1} #result is stored in column 9
 
 } #repeat for next simulation
 
@@ -131,8 +131,10 @@ if (n_sims<21){
 }
 percent05<-100*(sum(ptable[,8])/n_sims) 
 percentBon<-100*(sum(ptable[,9])/n_sims)
-paste('% ANOVAs with one effect or interaction < .05 = ',percent05)
-paste('% ANOVAs with one effect or interaction < .007 = ',percentBon)
+print(paste('% ANOVAs with one effect or interaction < .05 = ',percent05))
+print(paste('% ANOVAs with one effect or interaction < .007 = ',percentBon))
+print(paste('% mixed with one effect or interaction < .05 = ', 100*(sum(mxm_dt[,8])/n_sims)))
+print(paste('% mixed with one effect or interaction < .007 = ', 100*(sum(mxm_dt[,9])/n_sims)))
 
 # For an explanation of the issues raised by this exercise see:
 # http://deevybee.blogspot.co.uk/2013/06/interpreting-unexpected-significant.html

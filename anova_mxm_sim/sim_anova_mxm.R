@@ -3,7 +3,7 @@
 # 20th March 2017
 # Simulating data for multiway ANOVA
 #-------------------------------------------------------------------------
-setwd('/Users/au194693/projects/repro17/anova_mxm_sim') # Here is command to set working directory to Dropbox/BBSCR_STARS/Bishop on my mac
+## setwd('/Users/au194693/projects/repro17/anova_mxm_sim') # Here is command to set working directory to Dropbox/BBSCR_STARS/Bishop on my mac
 
 # Remember! you will need to download these packages if they aren't already downloaded
 library(reshape2) # for converting data from wide to long form (see below)

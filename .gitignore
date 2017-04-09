@@ -4,3 +4,6 @@
 .Ruserdata
 
 DB_script/
+
+anova_mxm_sim/*.txt
+*.csv

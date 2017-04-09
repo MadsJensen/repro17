@@ -139,6 +139,9 @@ print(paste('% mixed with one effect or interaction < .007 = ', 100*(sum(mxm_dt[
 # For an explanation of the issues raised by this exercise see:
 # http://deevybee.blogspot.co.uk/2013/06/interpreting-unexpected-significant.html
 
+write.csv(ptable, "anova_dt.csv")
+write.csv(mxm_dt, "mxm_dt.csv")
+
 # This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. https://creativecommons.org/licenses/by-nc-sa/4.0/
 #   
 

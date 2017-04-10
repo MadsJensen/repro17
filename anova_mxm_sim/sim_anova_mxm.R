@@ -12,7 +12,7 @@ library(grid) #https://cran.r-project.org/web/packages/gridExtra/vignettes/table
 require(lme4)
 
 options(scipen=999) #disable scientific notation.
-
+set.seed(183)
 #-------------------------------------------------------------------------
 # We are going to simulate data for a 3 way mixed anova: between/within/within
 # Our dependent variable is Score. 
